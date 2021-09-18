@@ -55,12 +55,7 @@ allTab.addEventListener("click", function(){
     inactive( [incomeBtn, expenseBtn] );
 })
 
-function active(element){
-
-    element.classList.add("active");
-}
 function show(element){
-
 
     element.classList.remove("hide");    
 }
@@ -74,6 +69,11 @@ function hide(elementsArray){
 
 }
 
+function active(element){
+
+    element.classList.add("active");
+}
+
 function inactive(){
 
     elementsArray.foreach(element=>{
@@ -82,6 +82,9 @@ function inactive(){
 
     }) ;
 }
+
+
+
 
 
 
@@ -134,11 +137,90 @@ function clearInput(inputs){
 }
 
 
+function calculateTotal(income,ENTRY_LIST)
+{
+    let sum = 0;
+    ENTRY_LIST.foreach(entry =>{
+        
+        if(entry.type == income)
+        {
+            sum += entry.amount;
+        }
+        
+    });
+
+    return sum;
+}
+
+function calculateTotal(type, ENTRY_LIST)
+{
+    let sum = 0;
+    ENTRY_LIST.foreach(entry =>{
+        
+        if(entry.type == type)
+        {
+            sum += entry.amount;
+        }
+        
+    });
+
+    return sum;
+}
 
 
+income = calculateTotal("income", ENTRY_LIST);
+outcome = calculateTotal("expense", ENTRY_LIST);
+balance = calculateBalance(income,outcome);
+
+function calculateBalance(income, outcome){
+
+    return income - outcome;
+
+}
 
 
+function showEntry(list, type, title, amount, id){
+
+    const entry = `
+                    <li id="${id}" class="${type}">
+                    <div class="entry"> ${title}: $${amount} </div>
+                    <div id="edit"></div>
+                    <div id="delete"></div>
+
+                </li>`;
+
+    const position = "afterbegin";
+
+    list.insertAdjacentHTML(position, entry);
 
 
+                }
+
+function updateUI(){
+
+    income = calculateTotal("income", ENTRY_LIST);
+    outcome = calculateTotal("expense", ENTRY_LIST);
+    balance = calculateBalance(income,outcome);
 
 
+    balanceEl.innerHTML = `<small>$</small>${balance}`;
+    incomeTotalEl.innerHTML = `<small>$</small>${income}`;
+    outcomeTotalEl.innerHTML = `<small>$</small>${outcome}`;
+
+    clearElement([incomeList, expenseList, allList]);
+
+    ENTRY_LIST.foreach(entry =>{
+        if(entry.type =="income"){
+
+            showEntry(incomeList, entry.type, entry.title, entry.amount, index);
+
+        } else if(entry.type == "expense")
+            {
+
+                showEntry(expenseList, entry.type, entry.title, entry.amount, index);
+
+            }
+
+         showEntry(allList,entry.type, entry.title, entry.amount, index);   
+    });
+}
